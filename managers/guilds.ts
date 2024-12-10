@@ -1,9 +1,9 @@
 import { HttpRequestMethod } from "@minecraft/server-net";
-import { Client } from "../client";
-import { BaseCache } from "./cache";
-import { Guild, PartialGuild } from "../classes/guids";
+import { Guild, PartialGuild } from "DiscordMC/classes/guids";
+import { Client } from "DiscordMC/client";
 import { RawGuild, RawPartialGuild } from "DiscordMC/types/raw";
 import { Routes } from "DiscordMC/types/routes";
+import { BaseCache } from "./cache";
 
 
 class GuildManager extends BaseCache<Guild> {

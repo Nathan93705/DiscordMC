@@ -1,5 +1,5 @@
 import { ClientEvent } from "DiscordMC/types/events";
-import { ClientEventSignal } from "./clientEvent";
+import { ClientEventSignal } from "DiscordMC/events/clientEvent";
 import { Message } from "DiscordMC/classes/message";
 
 class MessageCreateEventSignal extends ClientEventSignal {

@@ -1,8 +1,8 @@
 import { HttpRequestMethod } from "@minecraft/server-net";
-import { TextChannel } from "../classes/channel";
-import { Client } from "../client";
-import { BaseCache } from "./cache";
-import { Message, PartialMessage } from "../classes/message";
+import { TextChannel } from "DiscordMC/classes/channel";
+import { Client } from "DiscordMC/client";
+import { BaseCache } from "DiscordMC/managers/cache";
+import { Message, PartialMessage } from "DiscordMC/classes/message";
 import { RawMessage, RawPartialMessage } from "DiscordMC/types/raw";
 import { Routes } from "DiscordMC/types/routes";
 

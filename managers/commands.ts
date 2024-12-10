@@ -1,13 +1,13 @@
 import { system } from "@minecraft/server";
-import { Client } from "../client";
-import { BaseCache } from "./cache";
 import { HttpRequestMethod } from "@minecraft/server-net";
-import { Message, PartialMessage } from "DiscordMC/classes/message";
+import { Message } from "DiscordMC/classes/message";
 import { ClientEvent } from "DiscordMC/types/events";
 import { RawMessage, RawPartialMessage } from "DiscordMC/types/raw";
 import { Routes } from "DiscordMC/types/routes";
 import { CommandRunEventSignal } from "DiscordMC/events/commandRun";
 import { MessageCreateEventSignal } from "DiscordMC/events/messageCreate";
+import { Client } from "DiscordMC/client";
+import { BaseCache } from "./cache";
 
 type CommandCallback = (message: Message, paramaters: string[]) => void
 

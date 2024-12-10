@@ -1,8 +1,8 @@
 import { HttpRequestMethod } from "@minecraft/server-net";
-import { Client } from "../client";
-import { Role } from "../types/role";
+import { Client } from "DiscordMC/client";
+import { Role } from "DiscordMC/types/role";
 import { Channels, ChannelType } from "DiscordMC/types/channel";
-import { TextChannel } from "./channel";
+import { TextChannel } from "DiscordMC/classes/channel";
 import { ChannelManager } from "DiscordMC/managers/channels";
 import { Emoji } from "DiscordMC/types/emojis";
 import { RawPartialGuild, RawGuild, RawChannel } from "DiscordMC/types/raw";

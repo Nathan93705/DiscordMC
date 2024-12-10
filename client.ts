@@ -1,15 +1,15 @@
 import { http, HttpHeader, HttpRequest, HttpRequestMethod } from "@minecraft/server-net";
-import { ClientEvents } from "./events/clientEvents";
-import { EventEmitter } from "./classes/emitter";
-import { ClientReadyEventSignal } from "./events/ready";
-import { GuildManager } from "./managers/guilds";
-import { ClientUser } from "./classes/clientUser";
-import { CommandManager } from "./managers/commands";
-import { ChannelManager } from "./managers/channels";
-import { RawClientUser } from "./types/raw";
-import { Routes } from "./types/routes";
+import { ClientEvents } from "DiscordMC/events/clientEvents";
+import { EventEmitter } from "DiscordMC/classes/emitter";
+import { ClientReadyEventSignal } from "DiscordMC/events/ready";
+import { GuildManager } from "DiscordMC/managers/guilds";
+import { ClientUser } from "DiscordMC/classes/clientUser";
+import { CommandManager } from "DiscordMC/managers/commands";
+import { ChannelManager } from "DiscordMC/managers/channels";
+import { RawClientUser } from "DiscordMC/types/raw";
+import { Routes } from "DiscordMC/types/routes";
 
-interface ClientOptions {
+export interface ClientOptions {
     autoUpdates?: {
         guilds?: boolean
         channels?: boolean
@@ -20,7 +20,7 @@ interface ClientOptions {
     commandCheckRate?: number
 }
 
-class Client extends EventEmitter<keyof ClientEvents, ClientEvents[keyof ClientEvents]> {
+export class Client extends EventEmitter<keyof ClientEvents, ClientEvents[keyof ClientEvents]> {
 
     readonly options: ClientOptions
     public readonly guilds: GuildManager = new GuildManager(this);
@@ -110,6 +110,3 @@ class Client extends EventEmitter<keyof ClientEvents, ClientEvents[keyof ClientE
 
 
 }
-
-
-export { Client }

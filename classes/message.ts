@@ -1,11 +1,10 @@
 import { HttpRequestMethod } from "@minecraft/server-net";
 import { Client } from "DiscordMC/client";
-import { MessagePayload, MessageReference, MessageReferenceType } from "DiscordMC/types/message";
+import { MessagePayload, MessageReferenceType } from "DiscordMC/types/message";
 import { RawMessage, RawPartialMessage } from "DiscordMC/types/raw";
 import { Routes } from "DiscordMC/types/routes";
-import { User } from "./user";
-import { EmbedBuilder } from "./embed";
-import { TextChannel } from "./channel";
+import { User } from "DiscordMC/classes/user";
+import { EmbedBuilder } from "DiscordMC/classes/embed";
 
 
 export class PartialMessage {

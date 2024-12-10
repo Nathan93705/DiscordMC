@@ -1,6 +1,6 @@
 import { ClientEvent } from "DiscordMC/types/events";
-import { Client } from "../client";
 import { ClientEventSignal } from "./clientEvent";
+import { Client } from "DiscordMC/client";
 
 class ClientReadyEventSignal extends ClientEventSignal {
     public readonly id = ClientEvent.Ready;

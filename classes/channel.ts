@@ -1,7 +1,7 @@
 import { HttpRequestMethod } from "@minecraft/server-net";
-import { Client } from "../client";
-import { MessageManager } from "../managers/messages";
-import { Message } from "./message";
+import { Client } from "DiscordMC/client";
+import { MessageManager } from "DiscordMC/managers/messages";
+import { Message } from "DiscordMC/classes/message";
 import { MessagePayload } from "DiscordMC/types/message";
 import { RawChannel, RawMessage } from "DiscordMC/types/raw";
 import { Routes } from "DiscordMC/types/routes";

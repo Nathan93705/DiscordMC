@@ -1,6 +1,6 @@
-import { Role } from "./role";
-import { Emoji } from "./emojis";
-import { EmbedData } from "./embeds";
+import { Role } from "DiscordMC/types/role";
+import { Emoji } from "DiscordMC/types/emojis";
+import { EmbedData } from "DiscordMC/types/embeds";
 
 export interface RawUser {
     id: string;

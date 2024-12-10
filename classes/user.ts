@@ -1,5 +1,5 @@
 import { RawUser } from "DiscordMC/types/raw";
-import { Client } from "../client";
+import { Client } from "DiscordMC/client";
 
 class User {
     protected client: Client;

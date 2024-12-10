@@ -1,6 +1,6 @@
 import { EmbedBuilder } from "DiscordMC/classes/embed";
 
-interface MessageReference {
+export interface MessageReference {
     type?: MessageReferenceType;
     message_id?: string;
     channelId?: string;
@@ -8,16 +8,15 @@ interface MessageReference {
     fail_if_not_exists?: boolean;
 }
 
-enum MessageReferenceType {
+export enum MessageReferenceType {
     Default,
     Forward,
 }
 
-interface MessagePayload {
+export interface MessagePayload {
     content: string,
     embeds?: EmbedBuilder[],
     message_reference?: MessageReference
 
 }
 
-export { MessageReference, MessageReferenceType, MessagePayload };

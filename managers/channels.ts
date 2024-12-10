@@ -1,6 +1,6 @@
 import { BaseChannel, TextChannel } from "DiscordMC/classes/channel";
 import { Client } from "DiscordMC/client";
-import { BaseCache } from "./cache";
+import { BaseCache } from "DiscordMC/managers/cache";
 import { HttpRequestMethod } from "@minecraft/server-net";
 import { ChannelType } from "DiscordMC/types/channel";
 import { RawChannel } from "DiscordMC/types/raw";

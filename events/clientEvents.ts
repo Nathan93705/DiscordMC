@@ -1,7 +1,7 @@
 import { ClientEvent } from "DiscordMC/types/events";
-import { ClientReadyEventSignal } from "./ready";
-import { CommandRunEventSignal } from "./commandRun";
-import { MessageCreateEventSignal } from "./messageCreate";
+import { CommandRunEventSignal } from "DiscordMC/events/commandRun";
+import { MessageCreateEventSignal } from "DiscordMC/events/messageCreate";
+import { ClientReadyEventSignal } from "DiscordMC/events/ready";
 
 
 interface ClientEvents {

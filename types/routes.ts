@@ -1,6 +1,6 @@
-const API_ENDPOINT = 'https://discord.com/api/v10/';
+export const API_ENDPOINT = 'https://discord.com/api/v10/';
 
-enum Routes {
+export enum Routes {
     Channels = API_ENDPOINT + 'channels',
     Guilds = API_ENDPOINT + 'guilds',
     Applications = API_ENDPOINT + 'applications',
@@ -9,7 +9,5 @@ enum Routes {
     Avatar = Routes.CDN + 'avatars',
     Banner = Routes.CDN + 'banners',
 }
-
-export { Routes, API_ENDPOINT };
 
 //Taken From https://github.com/Felipe-Devr/blockybridge/blob/main/types/routes.ts
