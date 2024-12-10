@@ -1,116 +1,105 @@
-import { http, HttpRequestMethod } from "@minecraft/server-net";
-import { discordAPI } from "../utility";
-import { Client } from "..";
-import { CategoryChannel, ChannelType, GuildChannel, TextChannel, VoiceChannel } from "./channels";
+import { HttpRequestMethod } from "@minecraft/server-net";
+import { Client } from "../client";
+import { Role } from "../types/role";
+import { Channels, ChannelType } from "DiscordMC/types/channel";
+import { TextChannel } from "./channel";
+import { ChannelManager } from "DiscordMC/managers/channels";
+import { Emoji } from "DiscordMC/types/emojis";
+import { RawPartialGuild, RawGuild, RawChannel } from "DiscordMC/types/raw";
+import { Routes } from "DiscordMC/types/routes";
 
-export class CachedGuild {
+export class PartialGuild {
     readonly id: string
     readonly name: string
-    readonly icon: string | null
+    readonly icon?: string
+    readonly banner?: string
     readonly permissions: string
+    readonly features: any[]
 
-    constructor(id: string, name: string, icon: string, permissions: string) {
-        this.id = id;
-        this.name = name;
-        this.icon = icon;
-        this.permissions = permissions;
+    readonly client: Client
+
+    constructor(client: Client, data: RawPartialGuild) {
+        this.id = data.id;
+        this.name = data.name;
+        this.icon = data.icon;
+        this.banner = data.banner;
+        this.client = client
     }
 
-    bannerURL() {
+    public iconURL() {
         if (!this.icon) return null
         return `https://cdn.discordapp.com/icons/${this.id}/${this.icon}`
+    }
+    public bannerURL() {
+        if (!this.banner) return null
+        return `https://cdn.discordapp.com/banners/${this.id}/${this.banner}`
     }
 }
 
 
-
-
-type Role = {
-    id: string;
-    name: string;
-    description: string | null;
-    permissions: string;
-    position: number;
-    color: number;
-    hoist: boolean;
-    managed: boolean;
-    mentionable: boolean;
-    icon: string | null;
-    unicode_emoji: string | null;
-    tags?: { bot_id: string };
-    flags: number;
-};
-
-type Emoji = {
-    id: string;
-    name: string;
-    roles: string[];
-    require_colons: boolean;
-    managed: boolean;
-    animated: boolean;
-    available: boolean;
-};
-
-export class Guild {
-    id: string;
-    name: string;
-    icon: string | null;
-    description: string | null;
-    home_header: string | null;
-    splash: string | null;
-    discovery_splash: string | null;
+export class Guild extends PartialGuild {
+    description?: string;
+    home_header?: string;
+    splash?: string;
+    discovery_splash?: string;
     features: string[];
-    banner: string | null;
-    owner_id: string;
-    application_id: string | null;
+    owner_id?: string;
+    application_id?: string;
     region: string;
-    afk_channel_id: string | null;
+    afk_channel_id?: string;
     afk_timeout: number;
-    system_channel_id: string | null;
+    system_channel_id?: string;
     system_channel_flags: number;
     widget_enabled: boolean;
-    widget_channel_id: string | null;
+    widget_channel_id?: string;
     verification_level: number;
     roles: Role[];
     default_message_notifications: number;
     mfa_level: number;
     explicit_content_filter: number;
-    max_presences: number | null;
+    max_presences?: number;
     max_members: number;
     max_stage_video_channel_users: number;
     max_video_channel_users: number;
-    vanity_url_code: string | null;
+    vanity_url_code?: string;
     premium_tier: number;
     premium_subscription_count: number;
     preferred_locale: string;
-    rules_channel_id: string | null;
-    safety_alerts_channel_id: string | null;
-    public_updates_channel_id: string | null;
-    hub_type: string | null;
+    rules_channel_id?: string;
+    safety_alerts_channel_id: string;
+    public_updates_channel_id?: string;
+    hub_type?: string;
     premium_progress_bar_enabled: boolean;
-    latest_onboarding_question_id: string | null;
+    latest_onboarding_question_id?: string;
     nsfw: boolean;
     nsfw_level: number;
     emojis: Emoji[];
-    stickers: any[]; // Replace with appropriate type if needed
-    incidents_data: any | null; // Replace with appropriate type if needed
-    inventory_settings: any | null; // Replace with appropriate type if needed
+    stickers: any[];
+    incidents_data?: any;
+    inventory_settings?: any;
     embed_enabled: boolean;
-    embed_channel_id: string | null;
+    embed_channel_id?: string;
 
     readonly client: Client
 
-    constructor(data: any, client: Client) {
+    public readonly channels: ChannelManager;
+
+    constructor(client: Client, data: RawGuild) {
+        super(client, {
+            id: data.id,
+            name: data.name,
+            icon: data.icon,
+            banner: data.banner
+        })
+
+        this.channels = new ChannelManager(client)
+
         this.client = client
-        this.id = data.id;
-        this.name = data.name;
-        this.icon = data.icon;
         this.description = data.description;
         this.home_header = data.home_header;
         this.splash = data.splash;
         this.discovery_splash = data.discovery_splash;
         this.features = data.features;
-        this.banner = data.banner;
         this.owner_id = data.owner_id;
         this.application_id = data.application_id;
         this.region = data.region;
@@ -149,28 +138,19 @@ export class Guild {
         this.embed_channel_id = data.embed_channel_id;
     }
 
-    async getChannels(): Promise<GuildChannel[]> {
-        const request = discordAPI(`guilds/${this.id}/channels`, HttpRequestMethod.Get, this.client.token)
-
-        const response = await http.request(request);
-
-        const body = JSON.parse(response.body)
-        const channels: GuildChannel[] = []
-        for (const data of body) {
-            switch (data.type) {
-                case ChannelType.GuildCategory:
-                    channels.push(new CategoryChannel(data, this.client));
-                    break;
+    public async fetchChannels() {
+        const response = await this.client.sendRequest(`${Routes.Guilds}/${this.id}/channels`, HttpRequestMethod.Get);
+        const rawChannels = JSON.parse(response.body) as RawChannel[]
+        for (const raw of rawChannels) {
+            let constructor: Channels[keyof Channels];
+            switch (raw.type) {
                 case ChannelType.GuildText:
-                    channels.push(new TextChannel(data, this.client));
+                    constructor = TextChannel
                     break;
-                case ChannelType.GuildVoice:
-                    channels.push(new VoiceChannel(data, this.client));
-                    break;
-                default:
-                    channels.push(new GuildChannel(data, this.client))
             }
+            if (!constructor) continue;
+            const channel = new constructor(this.client, raw)
+            this.channels.setChannel(channel.id, channel);
         }
-        return channels
     }
 }

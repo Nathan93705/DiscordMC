@@ -1,42 +1,53 @@
-import { HttpRequestMethod, http } from "@minecraft/server-net";
-import { CachedGuild, Guild } from "../lib/guild";
-import { discordAPI } from "../utility";
-import { Client } from "..";
-import { system } from "@minecraft/server";
+import { HttpRequestMethod } from "@minecraft/server-net";
+import { Client } from "../client";
+import { BaseCache } from "./cache";
+import { Guild, PartialGuild } from "../classes/guids";
+import { RawGuild, RawPartialGuild } from "DiscordMC/types/raw";
+import { Routes } from "DiscordMC/types/routes";
 
 
-export class GuildManager {
-    private _cache: Map<string, CachedGuild>;
+class GuildManager extends BaseCache<Guild> {
 
-    private client: Client
+
+    protected partialCache: Map<string, PartialGuild> = new Map();
 
     constructor(client: Client) {
-        this.client = client
-        this.update()
-        if (this.client.options.autoUpdates.guilds)
-            system.runInterval(() => this.update(), this.client.options.autoUpdates.rate)
+        super(client);
     }
 
-    get cache() {
-        return this._cache
-    }
-    async fetch(guild_ID: string) {
-        const request = discordAPI(`guilds/${guild_ID}`, HttpRequestMethod.Get, this.client.token)
-        const response = await http.request(request);
-        const body = JSON.parse(response.body)
-        return new Guild(body, this.client)
-    }
-    async update() {
-        const request = discordAPI(`users/@me/guilds`, HttpRequestMethod.Get, this.client.token)
-        const response = await http.request(request);
-        const body = JSON.parse(response.body)
+    public async resolve(guildId: string, partial: true): Promise<PartialGuild | undefined>;
+    public async resolve(guildId: string, partial: false | undefined): Promise<Guild | undefined>;
 
-        if (!this._cache) this._cache = new Map<string, CachedGuild>()
-        this._cache.clear()
-        for (const data of body) {
-            const guild = new CachedGuild(data.id, data.name, data.icon, data.permissions)
-            this._cache.set(data.id, guild)
+    public async resolve(guildId: string, partial: boolean): Promise<Guild | PartialGuild | undefined> {
+        if (partial) {
+            if (this.partialCache.has(guildId)) return this.partialCache.get(guildId);
+            return (await this.fetch()).find(partialGuild => partialGuild.id == guildId)
         }
+        if (this.cache.has(guildId)) return this.cache.get(guildId);
+        const response = await this.client.sendRequest(`${Routes.Guilds}/${guildId}`, HttpRequestMethod.Get);
+        if (response.status !== 200) return;
+
+        const rawGuilds = JSON.parse(response.body) as RawGuild
+        const guild = new Guild(this.client, rawGuilds);
+
+        this.cache.set(guildId, guild);
+        return guild;
     }
 
+
+    public async fetch(): Promise<PartialGuild[]> {
+        const response = await this.client.sendRequest(
+            `${Routes.Users}/@me/guilds`,
+            HttpRequestMethod.Get
+        );
+        if (response.status != 200) return;
+
+        const rawguilds = JSON.parse(response.body) as RawPartialGuild[]
+        const cachedGuilds = rawguilds.map(rawguild => new PartialGuild(this.client, rawguild))
+        for (const guild of cachedGuilds) {
+            this.partialCache.set(guild.id, guild);
+        }
+        return cachedGuilds
+    }
 }
+export { GuildManager }
